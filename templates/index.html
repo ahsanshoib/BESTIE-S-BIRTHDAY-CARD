@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="bn" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#7A0C1E">
+    <meta name="description" content="A cinematic 24th birthday story for Anindita Shil Rima.">
+    <title>{{ title }}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
+    
+    <!-- External GSAP & Confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./static/css/style.css">
+    <!-- GSAP Animation Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <!-- No JS Fallback -->
+    <noscript>
+        <div class="noscript-overlay">
+            <h1>JavaScript Required</h1>
+            <p>Please enable JavaScript in your browser to view Rima's birthday surprise experience.</p>
+        </div>
+    </noscript>
+
+    <!-- Global Background Elements -->
+    <div class="app-background" id="appBg">
+        <div class="velvet-gradient"></div>
+        <div class="grain-overlay"></div>
+        <div class="light-leak"></div>
+        <div id="particleCanvas" class="particle-container"></div>
+    </div>
+
+    <!-- Shoe Emojis Overlay Container -->
+    <div id="shoeContainer" class="shoe-container"></div>
+
+    <!-- Velvet Curtains -->
+    <div class="curtain-container" id="curtainContainer">
+        <div class="curtain curtain-left" id="curtainLeft"></div>
+        <div class="curtain curtain-right" id="curtainRight"></div>
+    </div>
+
+    <!-- Progress Indicator -->
+    <nav class="chapter-tracker" id="chapterTracker">
+        <span class="chapter-badge" id="chapterBadge">01 / 13</span>
+    </nav>
+
+    <!-- Main Container for Story Chapters -->
+    <main class="app-viewport" id="appViewport">
+        
+        <!-- CHAPTER 0: LOADING SCREEN -->
+        <section class="chapter active" id="chapter-0" data-chapter="0">
+            <div class="chapter-content text-center">
+                <div class="loader-spinner"></div>
+                <h2 class="loading-title glowing-text">Preparing something special...</h2>
+                <p class="loading-subtitle">For Rima.</p>
+            </div>
+        </section>
+
+        <!-- CHAPTER 1: OPENING -->
+        <section class="chapter" id="chapter-1" data-chapter="1">
+            <div class="chapter-content text-center">
+                <p class="sub-heading gold-accent">A LITTLE SOMETHING FOR YOUR 24TH</p>
+                <h1 class="hero-title reveal-text">ANINDITA SHIL RIMA</h1>
+                <p class="hero-desc">seven years of memories, madness, and unbreakable friendship.</p>
+                <button class="btn btn-primary btn-glow" id="btnEnter">
+                    <span>ENTER EXPERIENCE</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: SEVEN YEARS -->
+        <section class="chapter" id="chapter-2" data-chapter="2">
+            <div class="chapter-content text-center">
+                <div class="big-number-container">
+                    <span class="giant-number" id="sevenNumber">7</span>
+                    <span class="giant-label">YEARS</span>
+                </div>
+                <div class="counter-grid">
+                    <div class="counter-card">
+                        <span class="counter-val" id="cntMonths">0</span>
+                        <span class="counter-lbl">MONTHS</span>
+                    </div>
+                    <div class="counter-card">
+                        <span class="counter-val" id="cntDays">0</span>
+                        <span class="counter-lbl">DAYS</span>
+                    </div>
+                </div>
+                <p class="story-quote">"and somehow, you've tolerated me this long."</p>
+                <button class="btn btn-secondary" id="btnToGallery">
+                    <span>CONTINUE TO MEMORIES</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: SIX PHOTO MEMORY GALLERY -->
+        <section class="chapter" id="chapter-3" data-chapter="3">
+            <div class="chapter-content">
+                <h2 class="section-title text-center">PHOTOGRAPHIC EVIDENCE</h2>
+                <div class="polaroid-wrapper">
+                    <div class="polaroid-card" id="polaroidCard">
+                        <div class="polaroid-frame">
+                            <img id="polaroidImg" src="/static/image/rima1.jpg" loading="lazy" alt="Rima memory" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'300\' viewBox=\'0 0 300 300\'><rect width=\'100%\' height=\'100%\' fill=\'%234A0612\'/><text x=\'50%\' y=\'50%\' fill=\'%23FFF\' dominant-baseline=\'middle\' text-anchor=\'middle\'>Memory Photo</text></svg>'">
+                        </div>
+                        <div class="polaroid-caption">
+                            <span id="polaroidNum">01 / 06</span>
+                            <p id="polaroidText">White outside, Chaos inside</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-controls">
+                    <button class="btn btn-icon" id="btnPrevPhoto" aria-label="Previous Photo">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                    <button class="btn btn-primary" id="btnNextPhoto">
+                        <span id="btnNextPhotoText">NEXT PHOTO</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: EMOTIONAL FRIENDSHIP SECTION -->
+        <section class="chapter" id="chapter-4" data-chapter="4">
+            <div class="chapter-content">
+                <div class="slideshow-frame">
+                    <img id="slideshowImg" class="slideshow-img" src="/static/image/us1.jpg" loading="lazy" alt="Us Together" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'300\' viewBox=\'0 0 300 300\'><rect width=\'100%\' height=\'100%\' fill=\'%237A0C1E\'/><text x=\'50%\' y=\'50%\' fill=\'%23FFF\' dominant-baseline=\'middle\' text-anchor=\'middle\'>Us Together</text></svg>'">
+                    <div class="slideshow-overlay"></div>
+                </div>
+                <div class="emotional-card glass-card">
+                    <p class="emo-body">It's been seven springs already...</p>
+
+<p class="emo-body">
+    I still remember the day I proposed to a Shundori with nothing but some tejpata and convinced her to become my bestie.
+    She said <strong>YES</strong>—and that's where this journey began.
+</p>
+
+<p class="emo-body">
+    Since then, we've shared our fair share of nonsense, random conversations, terrible jokes, unnecessary laughter, and way too much giggling.
+    And somehow, through all these years, you've remained one of the most constant friends in my life.
+    <br>
+    I may not always say it, but I genuinely appreciate having you around.
+    Especially that ridiculous giggle of yours—which, somehow, has a strange little superpower of making even the worst days feel a little less terrible.
+</p>
+
+<p class="emo-body">
+    Some people become friends. 
+    Some people become family. 
+    And some people just become a permanent headache.
+    <br>
+    You're obviously the third one.
+    <br>
+    I won't say I love you.
+    <br>
+    But you matter to me more than you probably know.
+</p>
+
+                    <p class="emo-final gold-accent">Thank you for being there.</p>
+                </div>
+
+
+                <button class="btn btn-primary mt-4" id="btnToCall">
+                    <span>CONTINUE</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: FAKE INCOMING CALL -->
+        <section class="chapter" id="chapter-5" data-chapter="5">
+            <div class="chapter-content">
+                <div class="phone-wrapper vibrating" id="phoneWrapper">
+                    <div class="phone-screen">
+                        <div class="phone-header">
+                            <span class="call-type">INCOMING CALL</span>
+                        </div>
+                        <div class="caller-avatar">
+                            <span>📞</span>
+                        </div>
+                        <h3 class="caller-name">ঘুষখোর উকিল</h3>
+                        <p class="call-subtitle">⚠️ 1 new emotional damage</p>
+                        
+                        <div class="call-actions">
+                            <button class="btn-call decline" id="btnDeclineCall">
+                                <span class="call-icon">✕</span>
+                                <span>DECLINE</span>
+                            </button>
+                            <button class="btn-call accept" id="btnAcceptCall">
+                                <span class="call-icon">📞</span>
+                                <span>ACCEPT</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="call-dialog glass-card hidden" id="callDialog">
+                    <h3 class="dialog-title">"Hello?"</h3>
+                    <p class="dialog-text">Anindita is about to sing Shoeb's favourite song...</p>
+                    <button class="btn btn-secondary mt-3" id="btnAfterCall">
+                        <span>READY??? →</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: THE ANNOYING SONG -->
+        <section class="chapter" id="chapter-6" data-chapter="6">
+            <div class="chapter-content text-center">
+                <div class="warning-banner">
+                    <span class="warning-icon">⚠️</span>
+                    <h3>WARNING</h3>
+                    <p>The following audio has been classified as a weapon of mass irritation.</p>
+                </div>
+                
+                <div class="audio-player-card glass-card">
+                    <p class="audio-title">The "Teasing Shoeb" Anthem</p>
+                    <div class="visualizer" id="visualizerBars">
+                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                    </div>
+                    <div class="audio-controls">
+                        <button class="btn btn-primary btn-glow" id="btnPlayRimaSong">
+                            <span>PLAY THE SONG 🎵</span>
+                        </button>
+                        <button class="btn btn-secondary hidden" id="btnStopRimaSong">
+                            <span>PAUSE / STOP</span>
+                        </button>
+                    </div>
+                    <div id="rimaSongFallback" class="audio-fallback hidden">
+                        <p>Looks like the music escaped. </p>
+                    </div>
+                </div>
+
+                <p class="story-quote hidden mt-4" id="rimaSongText">
+                    "Yes. THAT song. You know exactly what I'm talking about."
+                </p>
+
+                <button class="btn btn-primary mt-4" id="btnToCourtroom">
+                    <span>ENTER COURTROOM</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: COURTROOM -->
+        <section class="chapter" id="chapter-7" data-chapter="7">
+            <div class="chapter-content">
+                <div class="court-header text-center">
+                    <span class="gavel-icon">⚖️</span>
+                    <h2 class="court-title">THE MANGO PEOPLE vs. ANINDITA SHIL RIMA</h2>
+                    <p class="court-sub">IN THE HIGH COURT OF BESTIE AFFAIRS</p>
+                </div>
+
+                <div class="charges-list">
+                    <div class="charge-card glass-card">
+                        <span class="charge-num">CASE #001</span>
+                        <p>Hating my Favourite "KURO" for no reason</p>
+                    </div>
+                    <div class="charge-card glass-card">
+                        <span class="charge-num">CASE #002</span>
+                        <p>Teasing Shoeb about the "DEPT. OF PSYCOLOGY".</p>
+                    </div>
+                    <div class="charge-card glass-card">
+                        <span class="charge-num">CASE #003</span>
+                        <p>Not putting PHUL in ANAMIKA's hair</p>
+                    </div>
+                    <div class="charge-card glass-card">
+                        <span class="charge-num">CASE #004</span>
+                        <p>Sending "🥰🥰🥰"emoji to my BOINA's bestu</p>
+                    </div>
+                    <div class="charge-card glass-card">
+                        <span class="charge-num">CASE #005</span>
+                        <p>Slaughtering the Engineering Uni's Chickens</p>
+                    </div>
+                </div>
+
+                <div class="verdict-container text-center">
+                    <button class="btn btn-primary" id="btnVerdict">FETCH VERDICT</button>
+                    <div class="verdict-box hidden" id="verdictBox">
+                        <div class="stamp-verdict" id="stampVerdict">GUILTY</div>
+                        <p class="sentence-text">SENTENCE : MARRIAGE POSTPONED FOR 18 MONTHS.</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary mt-4 hidden" id="btnToLawyer">
+                    <span>MEET THE LAWYER</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: THE LAWYER -->
+        <section class="chapter" id="chapter-8" data-chapter="8">
+            <div class="chapter-content">
+                <div class="lawyer-card glass-card text-center">
+                    <div class="lawyer-badge">ADVOCATE</div>
+                    <h2 class="lawyer-name">ANINDITA SHIL RIMA</h2>
+                    <p class="lawyer-spec">SPECIALIZATION : GHOSTING CLIENTS AFTER PAYMENT CONFIRMATION.</p>
+                    
+                    <div class="lawyer-cases">
+                        <h4>UPCOMING DEFENSE CASES:</h4>
+                        <ul>
+                            <li><strong>Future Case #001 :</strong>The Bandhobis vs. Shoeb — Early Marriage without inviatation</li>
+                            <li><strong>Future Case #002:</strong>The Sasural vs. Shoeb — Asking for SISTER IN LAW as Dowry</li>
+                            <li><strong>Future Case #003:</strong>The Uncles vs. Shoeb — Flirting with their beautiful wives </li>
+                        </ul>
+                    </div>
+
+                    <p class="fee-note">"Your legal fees will be paid in friendship and Malai Cha of Agrabaad."</p>
+                </div>
+
+                <button class="btn btn-primary mt-4" id="btnToSecrets">
+                    <span>ACCESS CLASSIFIED FILES</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: TOP SECRET -->
+        <section class="chapter" id="chapter-9" data-chapter="9">
+            <div class="chapter-content text-center">
+                <div class="secret-header">
+                    <span class="lock-icon" id="secretLockIcon">🔒</span>
+                    <h2 class="secret-title">TOP SECRET CLASSIFIED INFORMATION</h2>
+                    <p class="secret-sub">CRUSH DATABASE // LEVEL 7 ACCESS</p>
+                </div>
+
+                <button class="btn btn-primary btn-glow" id="btnUnlockSecret">
+                    <span>UNLOCK FILE</span>
+                </button>
+
+                <div class="classified-files hidden" id="classifiedFiles">
+                    <div class="classified-card glass-card">
+                        <span class="univ-tag">BUET</span>
+                        <span class="status-tag classified">CLASSIFIED</span>
+                    </div>
+                    <div class="classified-card glass-card">
+                        <span class="univ-tag">KUET</span>
+                        <span class="status-tag classified">CLASSIFIED</span>
+                    </div>
+                    <div class="classified-card glass-card">
+                        <span class="univ-tag">BUTex</span>
+                        <span class="status-tag classified">CLASSIFIED</span>
+                    </div>
+                    <div class="classified-card glass-card active-target">
+                        <span class="univ-tag">CUET</span>
+                        <span class="status-tag current">CURRENT</span>
+                    </div>
+                    
+                    <p class="secret-footer-text mt-3">"Don't worry. Your secrets are safe with me..."</p>
+                </div>
+
+                <button class="btn btn-secondary mt-4 hidden" id="btnToHeart">
+                    <span>PROCEED TO CARDIOLOGY</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: BACKWARDS HEART -->
+        <section class="chapter" id="chapter-10" data-chapter="10">
+            <div class="chapter-content text-center">
+                <p class="heartbeat-text" id="heartSound">lub — dub ... lub — dub</p>
+
+                <div class="heart-animation-wrapper">
+                    <div class="heart-shape" id="rimaHeart">❤️</div>
+                </div>
+
+                <div class="heart-explanation glass-card mt-3">
+                    <h3>Scientists have yet to explain...</h3>
+                    <p class="mt-2">Why is Anindita's heart installed backwards?</p>
+                    <p class="gold-accent mt-2">victim of unrequited love, courtesy of Abu Taleb from UCC...mystery remains unsolved...ACP Pradyumaan on it</p>
+                </div>
+
+                <button class="btn btn-primary btn-glow mt-4" id="btnToCountdown">
+                    <span>BEGIN BIRTHDAY COUNTDOWN</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 11: BIRTHDAY COUNTDOWN & CANDLE BLOWING DRAMA -->
+        <section class="chapter" id="chapter-11" data-chapter="11">
+            <div class="chapter-content text-center">
+                <!-- Countdown Phase -->
+                <div id="countdownPhase">
+                    <div class="single-candle" id="singleCandle">🕯️</div>
+                    <div class="countdown-display" id="countdownNumber">3</div>
+                </div>
+
+                <!-- Reveal Phase -->
+                <div id="revealPhase" class="hidden">
+                    <!-- Dynamic Candle Text Banner -->
+                    <div class="candle-banner-container glass-card mb-3">
+                        <h2 id="candleBanner" class="glowing-text">FUUU DEE MAMAAAA, FU DEEE</h2>
+                    </div>
+
+                    <div class="cake-container">
+                        <div class="birthday-cake">🎂</div>
+                        <div id="candleFlame" class="candle-flame">🔥</div>
+                    </div>
+
+                    <h1 class="happy-bday-title glowing-text mt-3">
+                        HAPPY 24TH<br><span class="gold-accent">ANINDITA SHIL RIMA</span> ❤️
+                    </h1>
+
+                    <button class="btn btn-primary btn-glow mt-4 hidden" id="btnToDedicatedSong">
+                        <span>A SPECIAL DEDICATION →</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 12: DEDICATED VIDEO CHAPTER -->
+        <section class="chapter" id="chapter-12" data-chapter="12">
+            <div class="chapter-content text-center">
+                <h2 class="dedicated-title gold-accent">IT'S YOUR BIRTHDAY, SO HERE IS A SONG I AM DEDICATING TO YOU</h2>
+                
+                <div class="video-wrapper glass-card mt-4">
+                    <video id="forBestieVideo" controls width="100%" preload="none" poster="/static/image/template.jpg">
+                        <source src="/static/video/forbestie.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <button class="btn btn-primary mt-4" id="btnToFinalMessage">
+                    <span>for you, in words...</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAPTER 13: FINAL PARAGRAPH & REPEAT BUTTON -->
+        <section class="chapter" id="chapter-13" data-chapter="13">
+            <div class="chapter-content text-center">
+                <div class="final-letter glass-card">
+                    <h2 class="gold-accent">Dear Priyanka Chopra from Daraz❤️</h2>
+                    <p class="emo-body">
+                        I know you've been waiting for my birthday wish. And obviously, Bestu's wish has to be the best—it can't be some boring, stereotypical “Happy Birthday, stay blessed” type of thing. <br>
+So I made this dedicated little application just for you, powered by 18 hours of coding. <br>
+But honestly, even if it had taken 180 hours of coding instead of 18, it would still be nothing compared to your giggle.
+<br>
+Anyway, congratulations on officially becoming a 24-year-old grandma. 
+If you had gotten married on time, your son would probably be old enough to be out there chasing girls by now.
+<br>
+So please, connect EEE (Endless Emotional Excitement) and get married soon. <br> 
+valo thakbi but ashe-pasher kawke valo thakte dibi nh ar ki....
+<br>
+Happy Birthday <br> Bestie ❤️
+
+                    </p>
+                    <p class="signature mt-4">— Shoeb</p>
+                </div>
+
+                <button class="btn btn-primary btn-glow mt-4" id="btnRepeat">
+                    <span>REPEAT 🔄</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Audio Elements -->
+    <audio id="bgMusic" src="/static/music/background-music-chbkl.mp3" loop preload="none"></audio>
+    <audio id="audioTease" src="/static/music/rima-song.mp3" preload="none"></audio>
+    <audio id="audioBday" src="/static/music/birthday-song.mp3" preload="none"></audio>
+    <audio id="firecrackersSFX" src="/static/music/firecrackers.mp3" preload="none"></audio>
+    <audio id="crowdSFX" src="/static/music/crowd-cheer.mp3" preload="none"></audio>
+    <audio id="clappingSFX" src="/static/music/clapping.mp3" preload="none"></audio>
+
+    <!-- Application JavaScript -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

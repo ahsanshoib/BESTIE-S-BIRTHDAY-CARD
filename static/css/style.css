@@ -1,0 +1,853 @@
+/* ==========================================================================
+   RESET & SYSTEM VARIABLES
+   ========================================================================== */
+:root {
+  --primary-velvet: #7a0c1e;
+  --secondary-white: #ffffff;
+  --deep-burgundy: #4a0612;
+  --wine: #a61b35;
+  --soft-pink: #f8dde3;
+  --very-light-pink: #fff5f7;
+  --dark-text: #241015;
+  --muted-gold: #c9a45c;
+  --gold-glow: rgba(201, 164, 92, 0.4);
+
+  --font-serif: "Cinzel", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-bangla: "Tiro Bangla", serif;
+
+  --ease-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--deep-burgundy);
+  color: var(--secondary-white);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   BACKGROUND & PARTICLES
+   ========================================================================== */
+.app-background {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  transition: background 1.5s var(--ease-cinematic);
+}
+
+.velvet-gradient {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--primary-velvet) 0%, var(--deep-burgundy) 100%);
+  opacity: 0.95;
+}
+
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.6;
+}
+
+.light-leak {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle at 30% 30%, rgba(166, 27, 53, 0.3) 0%, transparent 60%);
+  animation: floatLight 12s infinite alternate ease-in-out;
+}
+
+@keyframes floatLight {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(5%, 5%) scale(1.1); }
+}
+
+.particle-container {
+  position: absolute;
+  inset: 0;
+}
+
+/* ==========================================================================
+   VELVET CURTAINS
+   ========================================================================== */
+.curtain-container {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+  display: flex;
+}
+
+.curtain {
+  width: 50%;
+  height: 100%;
+  background-color: var(--primary-velvet);
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+  transition: transform 1.4s var(--ease-cinematic);
+}
+
+.curtain-left {
+  border-right: 2px solid var(--muted-gold);
+  transform-origin: left center;
+}
+
+.curtain-right {
+  border-left: 2px solid var(--muted-gold);
+  transform-origin: right center;
+}
+
+.curtain-container.open .curtain-left {
+  transform: translateX(-100%);
+}
+
+.curtain-container.open .curtain-right {
+  transform: translateX(100%);
+}
+
+/* ==========================================================================
+   TRACKER / NAVIGATION
+   ========================================================================== */
+.chapter-tracker {
+  position: fixed;
+  top: env(safe-area-inset-top, 16px);
+  right: 16px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.chapter-badge {
+  background: rgba(36, 16, 21, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(201, 164, 92, 0.3);
+  color: var(--muted-gold);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-family: var(--font-serif);
+  letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   LAYOUT & CHAPTER SYSTEM
+   ========================================================================== */
+.app-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.chapter {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 32px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic), visibility 0.8s;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chapter.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.chapter-content {
+  width: 100%;
+  max-width: 440px;
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY & BUTTONS
+   ========================================================================== */
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.hero-title {
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  line-height: 1.15;
+  color: var(--secondary-white);
+  margin-bottom: 12px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  margin-bottom: 16px;
+  color: var(--soft-pink);
+}
+
+.sub-heading {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.hero-desc {
+  font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+  color: var(--soft-pink);
+  opacity: 0.9;
+  margin-bottom: 32px;
+}
+
+.gold-accent {
+  color: var(--muted-gold);
+}
+
+.glowing-text {
+  text-shadow: 0 0 15px var(--gold-glow);
+}
+
+.btn {
+  min-height: 48px;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--wine) 0%, var(--primary-velvet) 100%);
+  color: var(--secondary-white);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(74, 6, 18, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--secondary-white);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.btn-glow {
+  box-shadow: 0 0 20px rgba(166, 27, 53, 0.6), inset 0 0 10px rgba(201, 164, 92, 0.3);
+}
+
+.btn-icon {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--secondary-white);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-card {
+  background: rgba(74, 6, 18, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.text-center { text-align: center; }
+.hidden { display: none !important; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+
+/* ==========================================================================
+   CHAPTER SPECIFIC STYLES
+   ========================================================================== */
+
+/* Loader */
+.loader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--muted-gold);
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin-bottom: 20px;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Chapter 2: 7 Years */
+.big-number-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.giant-number {
+  font-family: var(--font-serif);
+  font-size: clamp(5rem, 25vw, 8rem);
+  font-weight: 900;
+  line-height: 0.9;
+  background: linear-gradient(180deg, var(--secondary-white) 30%, var(--muted-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.giant-label {
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  color: var(--soft-pink);
+  font-weight: 600;
+}
+
+.counter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.counter-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.counter-val {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--muted-gold);
+}
+
+.counter-lbl {
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  opacity: 0.7;
+}
+
+.story-quote {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--soft-pink);
+  margin-bottom: 24px;
+}
+
+/* Chapter 3: Polaroid Gallery */
+.polaroid-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  perspective: 1000px;
+}
+
+.polaroid-card {
+  background: var(--secondary-white);
+  color: var(--dark-text);
+  padding: 12px 12px 20px 12px;
+  border-radius: 4px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 310px;
+  transform: rotate(-2deg);
+  transition: transform 0.4s var(--ease-cinematic);
+}
+
+.polaroid-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #111;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.polaroid-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.polaroid-caption {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-sans);
+}
+
+.polaroid-caption span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--wine);
+}
+
+.polaroid-caption p {
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.gallery-controls {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Chapter 4: Emotional Friendship */
+.slideshow-frame {
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.slideshow-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slideshow-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, var(--deep-burgundy) 100%);
+}
+
+.emotional-card {
+  text-align: left;
+}
+
+.emo-line {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--soft-pink);
+  margin-bottom: 6px;
+}
+
+.emo-body {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin: 12px 0;
+  font-family: var(--font-bangla), var(--font-sans);
+}
+
+.emo-final {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Chapter 5: Fake Call */
+.phone-wrapper {
+  width: 100%;
+  max-width: 320px;
+  background: #121212;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 36px;
+  padding: 24px 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+.phone-wrapper.vibrating {
+  animation: phoneShake 0.4s infinite ease-in-out;
+}
+
+@keyframes phoneShake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg) scale(1.01); }
+  75% { transform: rotate(2deg) scale(0.99); }
+  100% { transform: rotate(0deg); }
+}
+
+.phone-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.caller-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--wine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 20px 0 12px 0;
+}
+
+.caller-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.call-subtitle {
+  font-size: 0.75rem;
+  color: #ff6b6b;
+  margin-top: 4px;
+}
+
+.call-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 40px;
+  gap: 16px;
+}
+
+.btn-call {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.call-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.decline .call-icon { background: #e74c3c; }
+.accept .call-icon { background: #2ecc71; }
+
+/* Chapter 6: Song */
+.warning-banner {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.warning-banner h3 {
+  font-size: 0.85rem;
+  color: #ff6b6b;
+  letter-spacing: 1px;
+}
+
+.warning-banner p {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+.visualizer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  height: 36px;
+  margin: 16px 0;
+}
+
+.visualizer .bar {
+  width: 6px;
+  height: 8px;
+  background: var(--muted-gold);
+  border-radius: 4px;
+}
+
+.visualizer.playing .bar {
+  animation: equalize 0.6s infinite alternate ease-in-out;
+}
+
+.visualizer.playing .bar:nth-child(1) { animation-delay: 0.1s; }
+.visualizer.playing .bar:nth-child(2) { animation-delay: 0.3s; }
+.visualizer.playing .bar:nth-child(3) { animation-delay: 0.2s; }
+.visualizer.playing .bar:nth-child(4) { animation-delay: 0.4s; }
+.visualizer.playing .bar:nth-child(5) { animation-delay: 0.15s; }
+
+@keyframes equalize {
+  0% { height: 8px; }
+  100% { height: 32px; }
+}
+
+/* Chapter 7: Courtroom */
+.gavel-icon { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+.court-title { font-size: 1.1rem; color: var(--muted-gold); }
+.court-sub { font-size: 0.65rem; letter-spacing: 2px; opacity: 0.7; margin-bottom: 16px; }
+
+.charges-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.charge-card {
+  padding: 10px 14px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.charge-num {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--muted-gold);
+  background: rgba(0,0,0,0.3);
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.charge-card p { font-size: 0.8rem; font-family: var(--font-bangla), var(--font-sans); }
+
+.stamp-verdict {
+  display: inline-block;
+  border: 4px solid #e74c3c;
+  color: #e74c3c;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 2rem;
+  padding: 4px 16px;
+  transform: rotate(-8deg);
+  border-radius: 8px;
+  margin-top: 12px;
+  animation: stampIn 0.3s var(--ease-bounce);
+}
+
+@keyframes stampIn {
+  0% { transform: scale(3) rotate(15deg); opacity: 0; }
+  100% { transform: scale(1) rotate(-8deg); opacity: 1; }
+}
+
+.sentence-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--muted-gold);
+  margin-top: 8px;
+}
+
+/* Chapter 8: Lawyer */
+.lawyer-badge {
+  background: var(--muted-gold);
+  color: var(--dark-text);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.lawyer-name { font-size: 1.3rem; color: var(--secondary-white); }
+.lawyer-spec { font-size: 0.75rem; color: var(--soft-pink); margin-bottom: 16px; }
+
+.lawyer-cases {
+  text-align: left;
+  background: rgba(0,0,0,0.2);
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.lawyer-cases h4 { font-size: 0.75rem; color: var(--muted-gold); margin-bottom: 6px; }
+.lawyer-cases ul { list-style: none; font-size: 0.8rem; font-family: var(--font-bangla), var(--font-sans); }
+.lawyer-cases li { margin-bottom: 4px; }
+
+.fee-note { font-size: 0.85rem; font-style: italic; color: var(--soft-pink); }
+
+/* Chapter 9: Secrets */
+.lock-icon { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+.secret-title { font-size: 1rem; color: #e74c3c; }
+.secret-sub { font-size: 0.65rem; letter-spacing: 1.5px; opacity: 0.7; margin-bottom: 20px; }
+
+.classified-files {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.classified-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.univ-tag { font-weight: 700; font-size: 0.9rem; }
+.status-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status-tag.classified { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+.status-tag.current { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+
+.classified-card.active-target {
+  border-color: #2ecc71;
+  box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+}
+
+.secret-footer-text { font-size: 0.85rem; color: var(--soft-pink); }
+
+/* Chapter 10: Heart */
+.heartbeat-text { font-size: 0.85rem; letter-spacing: 2px; opacity: 0.7; margin-bottom: 16px; }
+
+.heart-animation-wrapper {
+  margin: 20px 0;
+}
+
+.heart-shape {
+  font-size: 5rem;
+  display: inline-block;
+  filter: drop-shadow(0 0 20px rgba(166, 27, 53, 0.8));
+  animation: pulseHeart 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseHeart {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.15); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.1); }
+  60% { transform: scale(1); }
+}
+
+.heart-shape.rotated {
+  transform: rotate(180deg) !important;
+  animation: pulseHeartRotated 1.2s infinite ease-in-out !important;
+}
+
+@keyframes pulseHeartRotated {
+  0% { transform: rotate(180deg) scale(1); }
+  15% { transform: rotate(180deg) scale(1.15); }
+  30% { transform: rotate(180deg) scale(1); }
+  45% { transform: rotate(180deg) scale(1.1); }
+  60% { transform: rotate(180deg) scale(1); }
+}
+
+/* Chapter 11: Countdown & Finale */
+.single-candle { font-size: 4rem; margin-bottom: 12px; }
+.countdown-display {
+  font-size: 6rem;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  color: var(--muted-gold);
+}
+
+.birthday-cake { font-size: 4.5rem; }
+.candles-24-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  max-width: 200px;
+  margin: 0 auto 12px auto;
+  font-size: 0.75rem;
+}
+
+.happy-bday-title {
+  font-size: clamp(1.5rem, 6vw, 2.2rem);
+  line-height: 1.2;
+}
+
+.tease-transition { font-size: 0.85rem; color: var(--soft-pink); }
+
+.final-photo-frame {
+  width: 100%;
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  border: 2px solid var(--muted-gold);
+}
+
+.final-photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.final-letter {
+  text-align: left;
+}
+
+.final-letter h2 { font-size: 1.2rem; color: var(--muted-gold); }
+.final-letter p { font-size: 0.9rem; opacity: 0.9; }
+.signature { text-align: right; font-family: var(--font-serif); font-size: 1.1rem; color: var(--soft-pink); }
+
+.audio-fallback {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #ff6b6b;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .light-leak, .phone-wrapper.vibrating, .heart-shape {
+    animation: none !important;
+  }
+}

@@ -1,0 +1,25 @@
+# Python Bytecode
+_pycache_/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+
+# IDE Configuration
+.vscode/
+.idea/
+*.swp
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Vercel Build Output
+.vercel/
+
+# DO NOT IGNORE MEDIA ASSETS REQUIRED FOR DEPLOYMENT
+!static/image/
+!static/music/
