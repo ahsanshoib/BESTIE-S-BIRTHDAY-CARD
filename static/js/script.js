@@ -416,10 +416,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             if (elements.candleBanner) elements.candleBanner.textContent = "ARO JOREE DEH, EX RE URAY NITEE HOBEEEEEEE";
-        }, 5500);
+        }, 4000);
+
  setTimeout(() => {
             if (elements.candleBanner) elements.candleBanner.textContent = "DEKH BABES, TOR VOICE NOTE KI SHUNDORRRR";
-        }, 5500);
+        }, 4000);
         setTimeout(() => {
             if (elements.candleFlame) elements.candleFlame.style.display = 'none'; // ক্যান্ডেল পুরোপুরি নিভে যাওয়া
             if (elements.clappingSFX) elements.clappingSFX.play().catch(() => {});
