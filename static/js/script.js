@@ -410,17 +410,33 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.candleFlame) elements.candleFlame.style.opacity = '0.3'; // নিভু নিভু অবস্থা
         }, 3000);
 
-        setTimeout(() => {
-            if (elements.candleBanner) elements.candleBanner.textContent = "EIII FUUUU TEH KAAJ HOBE NAA RE PAGLIIIIII";
-        }, 5500);
+       // ৩য় রিকোয়েস্ট: Candle Blowing Drama Timeline
+setTimeout(() => {
+    if (elements.candleFlame) elements.candleFlame.style.opacity = '0.3'; // নিভু নিভু অবস্থা
+}, 3000);
 
-        setTimeout(() => {
-            if (elements.candleBanner) elements.candleBanner.textContent = "ARO JOREE DEH, EX RE URAY NITEE HOBEEEEEEE";
-        }, 4000);
+// ১ম টেক্সট (৩ সেকেন্ডের মাথায় আসবে এবং ৩ সেকেন্ড থাকবে)
+setTimeout(() => {
+    if (elements.candleBanner) elements.candleBanner.textContent = "EIII FUUUU TEH KAAJ HOBE NAA RE PAGLIIIIII";
+}, 3000);
 
- setTimeout(() => {
-            if (elements.candleBanner) elements.candleBanner.textContent = "DEKH BABES, TOR VOICE NOTE KI SHUNDORRRR";
-        }, 4000);
+// ২য় টেক্সট (৬ সেকেন্ডের মাথায় আসবে এবং ৩ সেকেন্ড থাকবে)
+setTimeout(() => {
+    if (elements.candleBanner) elements.candleBanner.textContent = "ARO JOREE DEH, EX RE URAY NITEE HOBEEEEEEE";
+}, 6000);
+
+// ৩য় টেক্সট (৯ সেকেন্ডের মাথায় আসবে এবং পেইজে থাকা পর্যন্ত থাকবে)
+setTimeout(() => {
+    if (elements.candleBanner) elements.candleBanner.textContent = "TOR FUU DEWAR POR KI ROKOM AWAJ HOI DEKH";
+}, 9000);
+
+// ক্যান্ডেল নিভে যাওয়া ও পরবর্তী স্টেপ (১০ সেকেন্ডে)
+setTimeout(() => {
+    if (elements.candleFlame) elements.candleFlame.style.display = 'none'; // ক্যান্ডেল পুরোপুরি নিভে যাওয়া
+    if (elements.clappingSFX) elements.clappingSFX.play().catch(() => {});
+    if (elements.btnToDedicatedSong) elements.btnToDedicatedSong.classList.remove('hidden');
+}, 10000);
+
         setTimeout(() => {
             if (elements.candleFlame) elements.candleFlame.style.display = 'none'; // ক্যান্ডেল পুরোপুরি নিভে যাওয়া
             if (elements.clappingSFX) elements.clappingSFX.play().catch(() => {});
