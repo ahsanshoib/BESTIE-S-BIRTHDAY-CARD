@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
             '/static/image/us1.jpg',
             '/static/image/us2.jpg',
             '/static/image/us3.jpg',
-            '/static/image/us4.jpg'
 
         ],
         sharedIndex: 0,
